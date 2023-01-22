@@ -6,5 +6,12 @@ import { Component } from '@angular/core';
   styleUrls: ['./app.component.less']
 })
 export class AppComponent {
-  title = 'InventreeQuickAddUI';
+
+  text: string = "a";
+
+  results: string[] = ["a", "b", "c", "d"];
+
+  search(event: any) {
+  }
+
 }
