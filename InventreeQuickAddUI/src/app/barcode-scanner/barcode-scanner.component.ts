@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 
 import { BrowserMultiFormatReader, NotFoundException } from '@zxing/library';
 import { __makeTemplateObject } from 'tslib';
+import { BarcodeValueDecoderService } from '../barcode-value-decoder.service';
 
 //const hints = new Map();
 //const formats = [BarcodeFormat.QR_CODE, BarcodeFormat.DATA_MATRIX/*, ...*/];
@@ -32,8 +33,7 @@ export class BarcodeScannerComponent implements OnInit {
 
   result = '';
 
-  constructor() {
-
+  constructor(private decoder: BarcodeValueDecoderService) {
   }
 
   startQRDecoding() {
@@ -54,11 +54,16 @@ export class BarcodeScannerComponent implements OnInit {
     this._started = true;
     console.log(this.selectableVideoDevices)
     console.info(`Starting video source`, this.selectedVideoDevice)
-    this.codeReader.decodeFromVideoDevice
-    this.codeReader.decodeFromVideoDevice(this.selectedVideoDevice, 'video', (result, err) => {
+
+    const constraints: MediaStreamConstraints = { video: {
+            deviceId: { exact: this.selectedVideoDevice }
+        }
+    };
+    this.codeReader.decodeFromConstraints(constraints, 'video', (result, err) => {
       if (result) {
         console.log(result)
-        this.result = result.getText();
+        const decodingResult = this.decoder.decodeBarcode(result);
+        console.log(decodingResult);
       }
       if (err && !(err instanceof NotFoundException)) {
         console.error(err)
