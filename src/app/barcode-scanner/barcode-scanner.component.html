@@ -1,0 +1,14 @@
+<div>
+  <video id="video" width="300" height="200" style="border: 1px solid gray"></video>
+</div>
+
+<p-selectButton *ngIf="selectableVideoDevices"
+  [options]="selectableVideoDevices" [(ngModel)]="selectedVideoDevice" optionLabel="label" optionValue="deviceId" (onChange)="startQRDecoding()"></p-selectButton>
+
+<div *ngIf="noVideoInputDevicesFound">
+  <span style="color: red; font-size: 150%;">Could not find any cameras</span>
+</div>
+
+
+<label>Result:</label>
+<pre><code id="result">{{result}}</code></pre>
