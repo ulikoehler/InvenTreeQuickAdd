@@ -1,15 +1,18 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, EventEmitter, OnInit } from '@angular/core';
 import { InventreeQuickAddService } from '../inventree-quick-add.service';
 
 const localStoragePartCategoryKey = "inventreePartCategory";
 const localStorageStorageLocationKey = "inventreeStorageLocation";
 
-
+export interface InventreeParameters {
+    partCategory: string;
+    storageLocation: string;
+};
 
 @Component({
-  selector: 'app-inventree-parameter-selector',
-  templateUrl: './inventree-parameter-selector.component.html',
-  styleUrls: ['./inventree-parameter-selector.component.less']
+    selector: 'app-inventree-parameter-selector',
+    templateUrl: './inventree-parameter-selector.component.html',
+    styleUrls: ['./inventree-parameter-selector.component.less']
 })
 export class InventreeParameterSelectorComponent implements OnInit {
 
@@ -22,16 +25,16 @@ export class InventreeParameterSelectorComponent implements OnInit {
     constructor(private inventree: InventreeQuickAddService) {
         // Load previous category from localstorage
         const localStoragePartCategory = window.localStorage.getItem(localStoragePartCategoryKey);
-        if(!!localStoragePartCategory) {
+        if (!!localStoragePartCategory) {
             const newPartCategory = Number(localStoragePartCategory);
-            if(!isNaN(newPartCategory)) {
+            if (!isNaN(newPartCategory)) {
                 this.selectedPartCategory = newPartCategory
             }
         }
         const localStorageStorageLocation = window.localStorage.getItem(localStorageStorageLocationKey);
-        if(!!localStorageStorageLocation) {
+        if (!!localStorageStorageLocation) {
             const newStorageLocation = Number(localStorageStorageLocation);
-            if(!isNaN(newStorageLocation)) {
+            if (!isNaN(newStorageLocation)) {
                 this.selectedStorageLocation = newStorageLocation;
             }
         }
@@ -46,13 +49,13 @@ export class InventreeParameterSelectorComponent implements OnInit {
     }
 
     ngOnInit(): void {
-      this.inventree.partCategories().subscribe(partCategories => {
-        console.info("Part categories", partCategories);
-        this.partCategories = partCategories;
-    })
-    this.inventree.storageLocations().subscribe(storageLocations => {
-          console.info("Storage locations", storageLocations);
-        this.storageLocations = storageLocations;
-      })
+        this.inventree.partCategories().subscribe(partCategories => {
+            console.info("Part categories", partCategories);
+            this.partCategories = partCategories;
+        })
+        this.inventree.storageLocations().subscribe(storageLocations => {
+            console.info("Storage locations", storageLocations);
+            this.storageLocations = storageLocations;
+        })
     }
 }
