@@ -6,7 +6,7 @@ from inventree.part import PartCategory
 import json
 
 import yaml
-with open("inventree.yml", "r") as file:
+with open("config.yml", "r") as file:
     config = yaml.safe_load(file)
 
 class InvenTreeQuickAddServer(object):
@@ -14,10 +14,10 @@ class InvenTreeQuickAddServer(object):
         self.app = Bottle()
         self.inventree = InvenTreeAPI(config["inventree"]["server"], username=config["inventree"]["username"], password=config["inventree"]["password"])
         self.init_routes()
-        
+
     def find_stock_locations(self) -> dict:
         all_stock_locations = StockLocation.list(self.inventree)
-        
+
         # Dict of part categories by name
         # (e.g. 'OpAmps')
         self.stock_locations_by_name = {
@@ -36,7 +36,7 @@ class InvenTreeQuickAddServer(object):
             for category in all_stock_locations
         }
         return self.stock_locations_by_pathstring
-    
+
     def find_part_categories(self) -> dict:
         all_categories = PartCategory.list(self.inventree)
 
@@ -58,14 +58,14 @@ class InvenTreeQuickAddServer(object):
             for category in all_categories
         }
         return self.part_categories_by_pathstring
-        
+
     def init_routes(self):
         """Initialize all routes"""
         @self.app.route('/api/inventree/storage-locations')
         def storage_locations():
             response.content_type = 'application/json'
             return json.dumps(list(self.find_stock_locations().keys()))
-        
+
         @self.app.route('/api/inventree/part-categories')
         def part_categories():
             response.content_type = 'application/json'
@@ -73,7 +73,7 @@ class InvenTreeQuickAddServer(object):
 
     def run(self):
         run(self.app, host='0.0.0.0', port=50949)
-        
+
 # Example usage
 if __name__ == "__main__":
     server = InvenTreeQuickAddServer()
