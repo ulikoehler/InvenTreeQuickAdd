@@ -54,6 +54,7 @@ export class BarcodeScannerComponent implements OnInit {
     this._started = true;
     console.log(this.selectableVideoDevices)
     console.info(`Starting video source`, this.selectedVideoDevice)
+    this.codeReader.decodeFromVideoDevice
     this.codeReader.decodeFromVideoDevice(this.selectedVideoDevice, 'video', (result, err) => {
       if (result) {
         console.log(result)
