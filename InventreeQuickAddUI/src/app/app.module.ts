@@ -10,11 +10,15 @@ import {AutoCompleteModule} from 'primeng/autocomplete';
 import { BarcodeScannerComponent } from './barcode-scanner/barcode-scanner.component';
 
 import {SelectButtonModule} from 'primeng/selectbutton';
+import {DropdownModule} from 'primeng/dropdown';
+import { InventreeParameterSelectorComponent } from './inventree-parameter-selector/inventree-parameter-selector.component';
+
 
 @NgModule({
   declarations: [
     AppComponent,
-    BarcodeScannerComponent
+    BarcodeScannerComponent,
+    InventreeParameterSelectorComponent
   ],
   imports: [
     BrowserModule,
@@ -22,7 +26,8 @@ import {SelectButtonModule} from 'primeng/selectbutton';
     FormsModule,
     AutoCompleteModule,
     SelectButtonModule,
-    AppRoutingModule
+    DropdownModule,
+    AppRoutingModule,
   ],
   providers: [],
   bootstrap: [AppComponent]
