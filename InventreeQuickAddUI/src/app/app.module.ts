@@ -15,6 +15,8 @@ import { HttpClientModule } from '@angular/common/http';
 import {CardModule} from 'primeng/card';
 import { InventreePartNumberInputComponent } from './inventree-part-number-input/inventree-part-number-input.component';
 
+
+import {AutoFocusModule} from 'primeng/autofocus';
 import {InputTextModule} from 'primeng/inputtext';
 
 @NgModule({
@@ -30,6 +32,7 @@ import {InputTextModule} from 'primeng/inputtext';
     BrowserAnimationsModule,
     FormsModule,
     CardModule,
+    AutoFocusModule,
     InputTextModule,
     SelectButtonModule,
     DropdownModule,
