@@ -12,7 +12,7 @@ import {SelectButtonModule} from 'primeng/selectbutton';
 import {DropdownModule} from 'primeng/dropdown';
 import { InventreeParameterSelectorComponent } from './inventree-parameter-selector/inventree-parameter-selector.component';
 import { HttpClientModule } from '@angular/common/http';
-
+import {CardModule} from 'primeng/card';
 
 @NgModule({
   declarations: [
@@ -25,6 +25,7 @@ import { HttpClientModule } from '@angular/common/http';
     BrowserModule,
     BrowserAnimationsModule,
     FormsModule,
+    CardModule,
     SelectButtonModule,
     DropdownModule,
     AppRoutingModule,

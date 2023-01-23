@@ -1,2 +1,15 @@
-<p-dropdown [options]="storageLocations" [(ngModel)]="selectedStorageLocation" placeholder="" optionLabel="name" optionValue="id"></p-dropdown>
-<p-dropdown [options]="partCategories" [(ngModel)]="selectedPartCategory" placeholder="" optionLabel="name" optionValue="id"></p-dropdown>
+<div class="grid p-fluid">
+    <div class="col-12 md:col-4">
+        <div class="p-inputgroup">
+            <span class="p-inputgroup-addon"><i class="pi pi-box"></i></span>
+            <p-dropdown pInput [options]="partCategories" [(ngModel)]="selectedPartCategory" placeholder="Category" optionLabel="name" optionValue="id"></p-dropdown>
+        </div>
+    </div>
+
+    <div class="col-12 md:col-4">
+        <div class="p-inputgroup">
+            <span class="p-inputgroup-addon"><i class="pi pi-filter"></i></span>
+            <p-dropdown pInput [options]="storageLocations" [(ngModel)]="selectedStorageLocation" placeholder="Storage location" optionLabel="name" optionValue="id"></p-dropdown>
+        </div>
+    </div>
+</div>
