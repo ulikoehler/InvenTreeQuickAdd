@@ -1,6 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 import { InventreeQuickAddService } from '../inventree-quick-add.service';
 
+const localStoragePartCategoryKey = "inventreePartCategory";
+const localStorageStorageLocationKey = "inventreeStorageLocation";
+
+
+
 @Component({
   selector: 'app-inventree-parameter-selector',
   templateUrl: './inventree-parameter-selector.component.html',
@@ -15,14 +20,29 @@ export class InventreeParameterSelectorComponent implements OnInit {
     selectedPartCategory: any;
 
     constructor(private inventree: InventreeQuickAddService) {
+        // Load previous category from localstorage
+        const localStoragePartCategory = window.localStorage.getItem(localStoragePartCategoryKey);
+        if(!!localStoragePartCategory) {
+            const newPartCategory = Number(localStoragePartCategory);
+            if(!isNaN(newPartCategory)) {
+                this.selectedPartCategory = newPartCategory
+            }
+        }
+        const localStorageStorageLocation = window.localStorage.getItem(localStorageStorageLocationKey);
+        if(!!localStorageStorageLocation) {
+            const newStorageLocation = Number(localStorageStorageLocation);
+            if(!isNaN(newStorageLocation)) {
+                this.selectedStorageLocation = newStorageLocation;
+            }
+        }
     }
 
     partCategoryChanged() {
-
+        window.localStorage.setItem(localStoragePartCategoryKey, this.selectedPartCategory);
     }
 
     storageLocationChanged() {
-
+        window.localStorage.setItem(localStorageStorageLocationKey, this.selectedStorageLocation);
     }
 
     ngOnInit(): void {

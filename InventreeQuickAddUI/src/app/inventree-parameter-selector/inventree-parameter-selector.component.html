@@ -2,14 +2,14 @@
     <!-- Part category-->
     <div class="col-12 md:col-4">
         <div class="p-inputgroup">
-            <span class="p-inputgroup-addon"><i class="pi pi-box"></i></span>
+            <span class="p-inputgroup-addon"><i class="pi pi-filter"></i></span>
             <p-dropdown pInput [options]="partCategories" [(ngModel)]="selectedPartCategory" placeholder="Category" optionLabel="name" optionValue="id" (onChange)="partCategoryChanged()"></p-dropdown>
         </div>
     </div>
     <!-- Storage location -->
     <div class="col-12 md:col-4">
         <div class="p-inputgroup">
-            <span class="p-inputgroup-addon"><i class="pi pi-filter"></i></span>
+            <span class="p-inputgroup-addon"><i class="pi pi-box"></i></span>
             <p-dropdown pInput [options]="storageLocations" [(ngModel)]="selectedStorageLocation" placeholder="Storage location" optionLabel="name" optionValue="id" (onChange)="storageLocationChanged()"></p-dropdown>
         </div>
     </div>
