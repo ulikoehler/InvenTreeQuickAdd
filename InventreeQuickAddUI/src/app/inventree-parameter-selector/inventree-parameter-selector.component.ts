@@ -17,6 +17,14 @@ export class InventreeParameterSelectorComponent implements OnInit {
     constructor(private inventree: InventreeQuickAddService) {
     }
 
+    partCategoryChanged() {
+
+    }
+
+    storageLocationChanged() {
+
+    }
+
     ngOnInit(): void {
       this.inventree.partCategories().subscribe(partCategories => {
         console.info("Part categories", partCategories);
