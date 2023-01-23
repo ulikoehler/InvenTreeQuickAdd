@@ -1,0 +1,9 @@
+inventree:
+  server: 'https://inventree.mydomain.com'
+  username: 'admin'
+  password: 'thub8thie4Nie4Aemoh5sheth1voh7'
+digikey:
+  client_id: ol7vahc0oagh7aeHush4xiex4daeng
+  client_secret: ao1tuVeek4
+  client_sandbox: false
+  storage_path: digikey_cache
