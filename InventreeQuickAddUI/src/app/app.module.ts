@@ -4,21 +4,24 @@ import { BrowserModule } from '@angular/platform-browser';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 
-import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import { FormsModule } from '@angular/forms';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { BarcodeScannerComponent } from './barcode-scanner/barcode-scanner.component';
 
-import {SelectButtonModule} from 'primeng/selectbutton';
-import {DropdownModule} from 'primeng/dropdown';
-import { InventreeParameterSelectorComponent } from './inventree-parameter-selector/inventree-parameter-selector.component';
 import { HttpClientModule } from '@angular/common/http';
-import {CardModule} from 'primeng/card';
+import { CardModule } from 'primeng/card';
+import { DropdownModule } from 'primeng/dropdown';
+import { SelectButtonModule } from 'primeng/selectbutton';
+import { InventreeParameterSelectorComponent } from './inventree-parameter-selector/inventree-parameter-selector.component';
 import { InventreePartNumberInputComponent } from './inventree-part-number-input/inventree-part-number-input.component';
 
-
-import {AutoFocusModule} from 'primeng/autofocus';
-import {InputTextModule} from 'primeng/inputtext';
+import { AutoFocusModule } from 'primeng/autofocus';
+import { ButtonModule } from 'primeng/button';
+import { InputTextModule } from 'primeng/inputtext';
+import {InputNumberModule} from 'primeng/inputnumber';
 import { QuickAddCardComponent } from './quick-add-card/quick-add-card.component';
+
+import { InventreeQuantityInputComponent } from './inventree-quantity-input/inventree-quantity-input.component';
 
 @NgModule({
   declarations: [
@@ -26,7 +29,8 @@ import { QuickAddCardComponent } from './quick-add-card/quick-add-card.component
     BarcodeScannerComponent,
     InventreeParameterSelectorComponent,
     InventreePartNumberInputComponent,
-    QuickAddCardComponent
+    QuickAddCardComponent,
+    InventreeQuantityInputComponent
   ],
   imports: [
     HttpClientModule,
@@ -34,6 +38,8 @@ import { QuickAddCardComponent } from './quick-add-card/quick-add-card.component
     BrowserAnimationsModule,
     FormsModule,
     CardModule,
+    InputNumberModule,
+    ButtonModule,
     AutoFocusModule,
     InputTextModule,
     SelectButtonModule,

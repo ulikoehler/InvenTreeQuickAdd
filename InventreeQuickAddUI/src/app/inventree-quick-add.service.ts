@@ -17,4 +17,8 @@ export class InventreeQuickAddService {
   public partCategories(): Observable<any[]> {
     return this.http.get<any[]>(`/api/inventree/part-categories`);
   }
+
+  public addPart(part: any): Observable<any> {
+    return this.http.post<any>(`/api/inventree/add-part`, part);
+  }
 }
