@@ -69,8 +69,10 @@ export class BarcodeValueDecoderService {
             if (part.startsWith("http")) {
                 // The entire part is an URL
                 info.SupplierURL = part;
+                continue;
             } else if (part == "RoHS") {
                 // At the moment, ignore this
+                continue;
             }
             const [key, value] = part.split(":");
             if (key == "QTY") {
