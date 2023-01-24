@@ -7,11 +7,4 @@ import { Component } from '@angular/core';
 })
 export class AppComponent {
 
-  text: string = "a";
-
-  results: string[] = ["a", "b", "c", "d"];
-
-  search(event: any) {
-  }
-
 }

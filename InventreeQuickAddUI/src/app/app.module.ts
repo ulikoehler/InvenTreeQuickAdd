@@ -18,13 +18,15 @@ import { InventreePartNumberInputComponent } from './inventree-part-number-input
 
 import {AutoFocusModule} from 'primeng/autofocus';
 import {InputTextModule} from 'primeng/inputtext';
+import { QuickAddCardComponent } from './quick-add-card/quick-add-card.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     BarcodeScannerComponent,
     InventreeParameterSelectorComponent,
-    InventreePartNumberInputComponent
+    InventreePartNumberInputComponent,
+    QuickAddCardComponent
   ],
   imports: [
     HttpClientModule,
