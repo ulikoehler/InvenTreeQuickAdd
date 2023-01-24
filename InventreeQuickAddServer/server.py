@@ -77,6 +77,14 @@ class InvenTreeQuickAddServer(object):
               for pathstring, category in self.part_categories_by_pathstring.items()
             ])
 
+        @self.app.route('/api/inventree/add-part')
+        def part_categories():
+            response.content_type = 'application/json'
+            return json.dumps([
+              {"name": pathstring, "id": category.pk}
+              for pathstring, category in self.part_categories_by_pathstring.items()
+            ])
+
     def run(self):
         run(self.app, host='0.0.0.0', port=50949)
 
