@@ -56,7 +56,8 @@ export class BarcodeScannerComponent implements OnInit {
     console.info(`Starting video source`, this.selectedVideoDevice)
 
     const constraints: MediaStreamConstraints = { video: {
-            deviceId: { exact: this.selectedVideoDevice }
+            deviceId: { exact: this.selectedVideoDevice },
+
         }
     };
     this.codeReader.decodeFromConstraints(constraints, 'video', (result, err) => {
