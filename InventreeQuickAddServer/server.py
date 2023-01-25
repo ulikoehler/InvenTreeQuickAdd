@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-from bottle import Bottle, run, response
+from bottle import Bottle, run, response, request
 from inventree.api import InvenTreeAPI
 from inventree.stock import StockLocation
 from inventree.part import PartCategory
@@ -77,13 +77,12 @@ class InvenTreeQuickAddServer(object):
               for pathstring, category in self.part_categories_by_pathstring.items()
             ])
 
-        @self.app.route('/api/inventree/add-part')
-        def part_categories():
+        @self.app.route('/api/inventree/add-part', method='POST')
+        def add_part():
+            data = request.json
+            print(data)
             response.content_type = 'application/json'
-            return json.dumps([
-              {"name": pathstring, "id": category.pk}
-              for pathstring, category in self.part_categories_by_pathstring.items()
-            ])
+            return {"status": "ok"}
 
     def run(self):
         run(self.app, host='0.0.0.0', port=50949)

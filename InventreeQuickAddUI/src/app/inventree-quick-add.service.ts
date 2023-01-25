@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { AddPartParameters } from './add-part-parameters';
 
 @Injectable({
   providedIn: 'root'
@@ -18,7 +19,7 @@ export class InventreeQuickAddService {
     return this.http.get<any[]>(`/api/inventree/part-categories`);
   }
 
-  public addPart(part: any): Observable<any> {
+  public addPart(part: AddPartParameters): Observable<any> {
     return this.http.post<any>(`/api/inventree/add-part`, part);
   }
 }

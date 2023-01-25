@@ -1,5 +1,5 @@
 export interface DecodedPartInfo {
-    RawBarcode: string;
+    RawBarcode?: string;
     Quantity?: number;
     DistributorPartNumber?: string;
     ManufacturerPartNumber?: string;

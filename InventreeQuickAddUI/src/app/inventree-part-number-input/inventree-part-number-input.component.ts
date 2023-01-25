@@ -6,5 +6,5 @@ import { Component } from '@angular/core';
   styleUrls: ['./inventree-part-number-input.component.less']
 })
 export class InventreePartNumberInputComponent {
-
+    public partNumber: string = '';
 }

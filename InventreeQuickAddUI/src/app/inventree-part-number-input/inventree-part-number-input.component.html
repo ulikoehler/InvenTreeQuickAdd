@@ -2,7 +2,7 @@
     <div class="col-12 md:col-4">
         <div class="p-inputgroup">
             <span class="p-inputgroup-addon"><i class="pi pi-qrcode"></i></span>
-            <input type="text" pInputText placeholder="Part number (or scan code)" pAutoFocus [autofocus]="true">
+            <input type="text" [(ngModel)]="partNumber" pInputText placeholder="Part number (or scan code)" pAutoFocus [autofocus]="true">
         </div>
     </div>
 </div>
