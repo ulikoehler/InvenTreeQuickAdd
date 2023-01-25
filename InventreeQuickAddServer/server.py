@@ -5,6 +5,10 @@ from inventree.stock import StockLocation
 from inventree.part import PartCategory
 import json
 
+import digikey
+import os
+from digikey.v3.productinformation import KeywordSearchRequest
+
 import yaml
 with open("config.yml", "r") as file:
     config = yaml.safe_load(file)
@@ -16,6 +20,21 @@ class InvenTreeQuickAddServer(object):
         self.init_routes()
         self.find_stock_locations()
         self.find_part_categories()
+        # Setup distributor API interfaces
+        self.setup_digikey()
+
+    def setup_digikey(self):
+        if "digikey" in config:
+            os.makedirs(config["digikey"]["storage_path"], exist_ok=True)
+            os.environ['DIGIKEY_CLIENT_ID'] = config["digikey"]["client_id"]
+            os.environ['DIGIKEY_CLIENT_SECRET'] = config["digikey"]["client_secret"]
+            os.environ['DIGIKEY_CLIENT_SANDBOX'] = str(config["digikey"]["client_sandbox"])
+            os.environ['DIGIKEY_STORAGE_PATH'] = config["digikey"]["storage_path"]
+
+    def search_digikey(self, part_number: str):
+        search_request = KeywordSearchRequest(keywords=part_number, record_count=10)
+        result = digikey.keyword_search(body=search_request)
+        return result
 
     def find_stock_locations(self) -> dict:
         all_stock_locations = StockLocation.list(self.inventree)
@@ -80,7 +99,20 @@ class InvenTreeQuickAddServer(object):
         @self.app.route('/api/inventree/add-part', method='POST')
         def add_part():
             data = request.json
+
             print(data)
+            # Search for part number
+            metadata = data["metadata"]
+            # Fetch location and category from database
+            category = PartCategory(self.inventree, data["category"])
+            location = StockLocation(self.inventree, data["location"])
+
+            partNumber = data["partNumber"]
+
+            print(f"Searching for part {partNumber} in category {category.name}")
+            # Search on DigiKey
+            digikey_result = self.search_digikey(data["partNumber"])
+            print(digikey_result)
             response.content_type = 'application/json'
             return {"status": "ok"}
 
