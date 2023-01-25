@@ -135,29 +135,38 @@ class InvenTreeQuickAddServer(object):
                 'category': category_pk
             })
 
+    def create_part_parameter_if_not_exists(self, part: Part, template: ParameterTemplate, value: str) -> bool:
+        """
+
+        Returns:
+            bool: if the parameter was created or not
+        """
+        try:
+            Parameter.create(self.inventree, {
+                'part': part.pk,
+                'template': template.pk,
+                'data': value
+            })
+            return True # Created
+        except requests.exceptions.HTTPError as ex:
+            if "The fields part, template must make a unique set".lower() in str(ex).lower():
+                # This means this part already has the relevant parameter => ignore
+                return False
+            else:
+                # Something else went wrong - re-raise ex
+                raise ex
+
     def add_parameters_to_part(self, part: Part, part_info: PartInfo):
         """Import parameters from part_info to part"""
         if part_info.package:
-            self.logger.info("Creating package parameter", part=part_info.mpn, value=part_info.package)
-            Parameter.create(self.inventree, {
-                'part': part.pk,
-                'template': self.parameter_templates.package.pk,
-                'data': part_info.package
-            })
+            if self.create_part_parameter_if_not_exists(part, self.parameter_templates.package, part_info.package):
+                self.logger.info("Creating package parameter", part=part_info.mpn, value=part_info.package)
         if part_info.datasheet:
-            self.logger.info("Creating datasheet parameter", part=part_info.mpn, value=part_info.datasheet)
-            Parameter.create(self.inventree, {
-                'part': part.pk,
-                'template': self.parameter_templates.datasheet.pk,
-                'data': part_info.datasheet
-            })
+            if self.create_part_parameter_if_not_exists(part, self.parameter_templates.datasheet, part_info.datasheet):
+                self.logger.info("Creating datasheet parameter", part=part_info.mpn, value=part_info.datasheet)
         if part_info.manufacturer:
-            self.logger.info("Creating manufacturer parameter", part=part_info.mpn, value=part_info.manufacturer)
-            Parameter.create(self.inventree, {
-                'part': part.pk,
-                'template': self.parameter_templates.manufacturer.pk,
-                'data': part_info.manufacturer
-            })
+            if self.create_part_parameter_if_not_exists(part, self.parameter_templates.manufacturer, part_info.manufacturer):
+                self.logger.info("Creating manufacturer parameter", part=part_info.mpn, value=part_info.manufacturer)
 
     def init_routes(self):
         """Initialize all routes"""
@@ -181,7 +190,6 @@ class InvenTreeQuickAddServer(object):
         def add_part():
             data = request.json
 
-            print(data)
             # Search for part number
             metadata = data["metadata"]
             # Fetch location and category from database
@@ -214,7 +222,6 @@ class InvenTreeQuickAddServer(object):
             self.add_parameters_to_part(part, part_info)
             # Add the part to the stock
 
-            print(part_info)
 
             response.content_type = 'application/json'
             return {"status": "ok"}

@@ -1,3 +1,4 @@
 inventree
 digikey-api
 yaml
+structlog
