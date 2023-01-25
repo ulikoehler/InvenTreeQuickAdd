@@ -7,7 +7,7 @@ import json
 
 import digikey
 import os
-from digikey.v3.productinformation import KeywordSearchRequest
+from digikey.v3.productinformation import KeywordSearchRequest, KeywordSearchResponse, ProductDetails, PidVid
 
 import yaml
 with open("config.yml", "r") as file:
@@ -31,7 +31,7 @@ class InvenTreeQuickAddServer(object):
             os.environ['DIGIKEY_CLIENT_SANDBOX'] = str(config["digikey"]["client_sandbox"])
             os.environ['DIGIKEY_STORAGE_PATH'] = config["digikey"]["storage_path"]
 
-    def search_digikey(self, part_number: str):
+    def search_digikey(self, part_number: str) -> KeywordSearchResponse:
         search_request = KeywordSearchRequest(keywords=part_number, record_count=10)
         result = digikey.keyword_search(body=search_request)
         return result
@@ -110,9 +110,28 @@ class InvenTreeQuickAddServer(object):
             partNumber = data["partNumber"]
 
             print(f"Searching for part {partNumber} in category {category.name}")
+
+            part_data = {
+            }
+
             # Search on DigiKey
             digikey_result = self.search_digikey(data["partNumber"])
-            print(digikey_result)
+            # Try to find exactly matching MPNs
+            if digikey_result.exact_manufacturer_products_count > 0:
+                # Exact match on manufacturer part number
+                product: ProductDetails = digikey_result.exact_manufacturer_products[0]
+                part_data["Description"] = product.detailed_description
+                part_data["Datasheet"] = product.primary_datasheet
+                part_data["Manufacturer"] = product.manufacturer.value
+                for parameter in product.parameters:
+                    if parameter.parameter == "Supplier Device Package":
+                        part_data["Package"] = parameter.value
+            elif digikey_result.exact_digi_key_product is not None:
+                # Exact match on DigiKey part number
+                pass # TODO
+
+            print(part_data)
+
             response.content_type = 'application/json'
             return {"status": "ok"}
 
