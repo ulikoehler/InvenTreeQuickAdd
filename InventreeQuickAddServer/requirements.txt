@@ -1,4 +1,4 @@
 inventree
 digikey-api
-yaml
+pyyaml
 structlog
