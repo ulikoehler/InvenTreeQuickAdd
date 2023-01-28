@@ -1,2 +1,2 @@
 #!/bin/sh
-nodemon -w . --exec python server.py
+nodemon -e py,yaml -w . --exec python server.py
