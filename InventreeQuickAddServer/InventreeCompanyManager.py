@@ -49,9 +49,9 @@ class InvenTreeManufacturerManager(object):
 
         # Download remote image
         image_url = None
-        if "remote_image" in template:
-            image_url = template["remote_image"]
-            del template["remote_image"]
+        if "logo" in template:
+            image_url = template["logo"]
+            del template["logo"]
 
         self.standard_manufacturers[template["name"]] = self.create_manufacturer_if_not_exists(template)
         # Add image, if any
@@ -101,9 +101,9 @@ class InvenTreeSupplierManager(object):
 
         # Download remote image
         image_url = None
-        if "remote_image" in template:
-            image_url = template["remote_image"]
-            del template["remote_image"]
+        if "logo" in template:
+            image_url = template["logo"]
+            del template["logo"]
 
         self.standard_suppliers[template["name"]] =  self.create_supplier_if_not_exists(template)
         # Add image, if any
