@@ -16,6 +16,7 @@ from digikey.v3.productinformation import (KeywordSearchRequest,
 
 from inventree.part import Parameter, ParameterTemplate, Part, PartCategory
 from inventree.stock import StockItem, StockLocation
+from InventreeSupplierPartManager import InventreeSupplierPartManager
 
 class PartInfo(object):
     """Abstract part info, indepent of the source"""
@@ -45,6 +46,7 @@ class InvenTreeQuickAddServer(object):
         self.setup_digikey()
         self.parameter_templates = InventreeParameterTemplateManager(self.inventree)
         self.suppliers = InvenTreeCompanyManager(self.inventree)
+        self.supplier_parts = InventreeSupplierPartManager(self.inventree, self.suppliers)
 
     def setup_digikey(self):
         if "digikey" in config:
@@ -186,7 +188,7 @@ class InvenTreeQuickAddServer(object):
             digikey_result = self.search_digikey(part_info.mpn)
             # Try to find exactly matching MPNs
             if digikey_result.exact_manufacturer_products_count > 0:
-                # Exact match on manufacturer part number
+                # Copy part properties only from the first exact match
                 product: ProductDetails = digikey_result.exact_manufacturer_products[0]
                 part_info.description = product.detailed_description
                 part_info.datasheet = product.primary_datasheet
@@ -203,11 +205,17 @@ class InvenTreeQuickAddServer(object):
             ###
             part = self.get_or_create_part(part_info, category.pk)
             self.add_parameters_to_part(part, part_info)
-            # Add to supplier
-            digikey = self.suppliers["DigiKey"]
+
+            # Add supplier parts
+            for product in digikey_result.exact_manufacturer_products:
+                self.logger.info("Creating DigKey supplier part", mpn=part_info.mpn, sku=product.digi_key_part_number)
+                self.supplier_parts.create_supplier_part("Digi-Key", part, {
+                    "SKU": product.digi_key_part_number,
+                    "link": product.product_url
+                })
+
 
             # Add the part to the stock
-
 
             response.content_type = 'application/json'
             return {"status": "ok"}

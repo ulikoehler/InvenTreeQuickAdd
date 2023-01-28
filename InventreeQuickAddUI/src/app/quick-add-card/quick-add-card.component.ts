@@ -25,6 +25,12 @@ export class QuickAddCardComponent {
 
     save() { // Save button clicked
         console.log('Saved!');
+        if(this.parameterSelector.selectedStorageLocation === undefined) {
+            return alert("Please select a storage location!");
+        }
+        if(this.parameterSelector.selectedPartCategory === undefined) {
+            return alert("Please select a part category!");
+        }
         const part: AddPartParameters = {
             partNumber: this.partNumberInput.partNumber,
             quantity: this.quantityInput.quantity,
