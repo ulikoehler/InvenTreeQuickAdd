@@ -1,10 +1,16 @@
+config:
+    currency: EUR
+
 suppliers:
-    - name: DigiKey,
+    - name: Digi-Key
       website: https://www.digikey.de/
-      remote_image: https://www.digikey.de/-/media/Images/Header/logo_dk.png
-    - name: Mouser,
+      remote_image: https://logodix.com/logo/1667872.jpg
+    - name: Mouser
       website: https://www.mouser.de/
-      remote_image: https://www.mouser.de/images/mouser-reg-logo-trim.png
-    - name: LCSC,
+      remote_image: https://logodix.com/logo/1681468.png
+    - name: Farnell
+      website: https://www.farnell.de
+      remote_image: https://logosrated.net/wp-content/uploads/parser/Farnell-Logo-1.png
+    - name: LCSC
       website: https://www.lcsc.com/
       remote_image: https://www.lcsc.com/images/logo.png

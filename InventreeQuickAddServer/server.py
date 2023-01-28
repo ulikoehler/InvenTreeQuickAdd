@@ -14,7 +14,7 @@ from digikey.v3.productinformation import (KeywordSearchRequest,
                                            KeywordSearchResponse, PidVid,
                                            ProductDetails)
 
-from inventree.part import Parameter, ParameterTemplate, Part, PartCategory, SupplierPart
+from inventree.part import Parameter, ParameterTemplate, Part, PartCategory
 from inventree.stock import StockItem, StockLocation
 
 class PartInfo(object):
@@ -64,7 +64,6 @@ class InvenTreeQuickAddServer(object):
 
     def find_stock_locations(self) -> dict:
         all_stock_locations = StockLocation.list(self.inventree)
-
         # Dict of part categories by name
         # (e.g. 'OpAmps')
         self.stock_locations_by_name = {
@@ -176,6 +175,7 @@ class InvenTreeQuickAddServer(object):
             # Search for part number
             metadata = data["metadata"]
             # Fetch location and category from database
+            # These are only selectable from EXISTING locations and categories
             category = PartCategory(self.inventree, data["category"])
             location = StockLocation(self.inventree, data["location"])
 
@@ -204,7 +204,8 @@ class InvenTreeQuickAddServer(object):
             part = self.get_or_create_part(part_info, category.pk)
             self.add_parameters_to_part(part, part_info)
             # Add to supplier
-            digikey = self.suppliers.get_or_create_digikey()
+            digikey = self.suppliers["DigiKey"]
+
             # Add the part to the stock
 
 

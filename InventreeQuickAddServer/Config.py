@@ -8,7 +8,7 @@ with open("config.yml", "r") as file:
 def connect_to_inventree() -> InvenTreeAPI:
     """Connect to the Inventree server"""
     return InvenTreeAPI(
-        config["inventree"]["url"],
+        host=config["inventree"]["url"],
         username=config["inventree"]["username"],
         password=config["inventree"]["password"],
     )
