@@ -8,7 +8,7 @@ import requests
 import structlog
 from Config import config, connect_to_inventree
 from InventreeParameterTemplateManager import InventreeParameterTemplateManager
-from InventreeCompanyManager import InvenTreeCompanyManager
+from InventreeCompanyManager import InvenTreeManufacturerManager, InvenTreeSupplierManager
 from bottle import Bottle, request, response, run
 from digikey.v3.productinformation import (KeywordSearchRequest,
                                            KeywordSearchResponse, PidVid,
@@ -16,7 +16,7 @@ from digikey.v3.productinformation import (KeywordSearchRequest,
 
 from inventree.part import Parameter, ParameterTemplate, Part, PartCategory
 from inventree.stock import StockItem, StockLocation
-from InventreeSupplierPartManager import InventreeSupplierPartManager
+from InventreeSupplierPartManager import InventreeSupplierManufacturerPartManager
 
 class PartInfo(object):
     """Abstract part info, indepent of the source"""
@@ -45,8 +45,9 @@ class InvenTreeQuickAddServer(object):
         # Setup distributor API interfaces
         self.setup_digikey()
         self.parameter_templates = InventreeParameterTemplateManager(self.inventree)
-        self.suppliers = InvenTreeCompanyManager(self.inventree)
-        self.supplier_parts = InventreeSupplierPartManager(self.inventree, self.suppliers)
+        self.suppliers = InvenTreeSupplierManager(self.inventree)
+        self.manufacturers = InvenTreeManufacturerManager(self.inventree)
+        self.supplier_manufacturer_parts = InventreeSupplierManufacturerPartManager(self.inventree, self.suppliers, self.manufacturers)
 
     def setup_digikey(self):
         if "digikey" in config:
@@ -192,7 +193,7 @@ class InvenTreeQuickAddServer(object):
                 product: ProductDetails = digikey_result.exact_manufacturer_products[0]
                 part_info.description = product.detailed_description
                 part_info.datasheet = product.primary_datasheet
-                part_info["Manufacturer"] = product.manufacturer.value
+
                 for parameter in product.parameters:
                     if parameter.parameter == "Supplier Device Package":
                         part_info.package = parameter.value
@@ -209,9 +210,13 @@ class InvenTreeQuickAddServer(object):
             # Add supplier parts
             for product in digikey_result.exact_manufacturer_products:
                 self.logger.info("Creating DigKey supplier part", mpn=part_info.mpn, sku=product.digi_key_part_number)
-                self.supplier_parts.create_supplier_part("Digi-Key", part, {
+                self.supplier_manufacturer_parts.create_supplier_part("Digi-Key", part, {
                     "SKU": product.digi_key_part_number,
                     "link": product.product_url
+                })
+                # Create manufacturer part
+                self.supplier_manufacturer_parts.create_manufacturer_part(product.manufacturer.value, part, {
+                    "MPN": part_info.mpn,
                 })
 
 

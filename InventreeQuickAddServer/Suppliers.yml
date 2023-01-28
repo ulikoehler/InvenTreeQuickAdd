@@ -16,15 +16,21 @@ suppliers:
       remote_image: https://www.lcsc.com/images/logo.png
 
 manufacturers:
-    ST Microelectronics:
+    -   name: ST Microelectronics
         website: https://www.st.com/
         aliases:
             - ST
-    Texas Instruments:
+            - STMicroelectronics
+    -   name: Texas Instruments
         website: https://www.ti.com/
         aliases:
             - TI
-    Analog Devices:
+    -   name: Analog Devices
         website: https://www.analog.com/
         aliases:
             - ADI
+            - Analog Devices Inc
+    -   name: Microchip Technology
+        website: https://www.microchip.com/
+        aliases:
+            - Microchip
