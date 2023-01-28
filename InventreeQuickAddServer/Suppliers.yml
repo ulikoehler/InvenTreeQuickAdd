@@ -18,19 +18,23 @@ suppliers:
 manufacturers:
     -   name: ST Microelectronics
         website: https://www.st.com/
+        logo: https://logodix.com/logo/1609757.png
         aliases:
             - ST
             - STMicroelectronics
     -   name: Texas Instruments
         website: https://www.ti.com/
+        logo: https://logodix.com/logo/406714.png
         aliases:
             - TI
     -   name: Analog Devices
         website: https://www.analog.com/
+        logo: https://dwglogo.com/wp-content/uploads/2017/11/Analog_Devices_logo.png
         aliases:
             - ADI
             - Analog Devices Inc
     -   name: Microchip Technology
         website: https://www.microchip.com/
+        logo: https://logodix.com/logo/1743243.png
         aliases:
             - Microchip
