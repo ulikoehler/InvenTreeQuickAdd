@@ -6,35 +6,17 @@ import re
 import digikey
 import requests
 import structlog
-import yaml
+from Config import config, connect_to_inventree
+from InventreeParameterTemplateManager import InventreeParameterTemplateManager
+from InventreeSupplierManager import InventreeSupplierManager
 from bottle import Bottle, request, response, run
 from digikey.v3.productinformation import (KeywordSearchRequest,
                                            KeywordSearchResponse, PidVid,
                                            ProductDetails)
 from inventree.api import InvenTreeAPI
-from inventree.part import Parameter, ParameterTemplate, Part, PartCategory
+
+from inventree.part import Parameter, ParameterTemplate, Part, PartCategory, SupplierPart
 from inventree.stock import StockItem, StockLocation
-
-with open("config.yml", "r") as file:
-    config = yaml.safe_load(file)
-
-class InventreeParameterTemplateManager(object):
-    def __init__(self, api: InvenTreeAPI):
-        self.api = api
-        self.datasheet = self.create_parameter_template_if_not_exists({'name' : 'Datasheet'})
-        self.package = self.create_parameter_template_if_not_exists({'name' : 'Package'})
-        self.manufacturer = self.create_parameter_template_if_not_exists({'name' : 'Manufacturer'})
-
-    def create_parameter_template_if_not_exists(self, template: dict) -> ParameterTemplate:
-        try:
-            return ParameterTemplate.create(self.api, template)
-        except requests.HTTPError as ex:
-            if "part parameter template with this Name already exists".lower() in str(ex).lower():
-                # Ignore this error but fetch the template from the DB
-                return ParameterTemplate.list(self.api, name=template["name"])[0]
-            else:
-                # Other exception, re-raise
-                raise ex
 
 class PartInfo(object):
     """Abstract part info, indepent of the source"""
@@ -50,12 +32,13 @@ class PartInfo(object):
     def __getitem__(self, key):
         return getattr(self, key)
 
+
 class InvenTreeQuickAddServer(object):
     def __init__(self):
         self.logger = structlog.get_logger()
 
         self.app = Bottle()
-        self.inventree = InvenTreeAPI(config["inventree"]["server"], username=config["inventree"]["username"], password=config["inventree"]["password"])
+        self.inventree = connect_to_inventree()
         self.init_routes()
         self.find_stock_locations()
         self.find_part_categories()
