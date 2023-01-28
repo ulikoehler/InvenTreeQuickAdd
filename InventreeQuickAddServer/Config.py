@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 import yaml
 from inventree.api import InvenTreeAPI
 

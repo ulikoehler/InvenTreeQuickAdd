@@ -1,0 +1,10 @@
+suppliers:
+    - name: DigiKey,
+      website: https://www.digikey.de/
+      remote_image: https://www.digikey.de/-/media/Images/Header/logo_dk.png
+    - name: Mouser,
+      website: https://www.mouser.de/
+      remote_image: https://www.mouser.de/images/mouser-reg-logo-trim.png
+    - name: LCSC,
+      website: https://www.lcsc.com/
+      remote_image: https://www.lcsc.com/images/logo.png

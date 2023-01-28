@@ -8,12 +8,11 @@ import requests
 import structlog
 from Config import config, connect_to_inventree
 from InventreeParameterTemplateManager import InventreeParameterTemplateManager
-from InventreeSupplierManager import InventreeSupplierManager
+from InventreeCompanyManager import InvenTreeCompanyManager
 from bottle import Bottle, request, response, run
 from digikey.v3.productinformation import (KeywordSearchRequest,
                                            KeywordSearchResponse, PidVid,
                                            ProductDetails)
-from inventree.api import InvenTreeAPI
 
 from inventree.part import Parameter, ParameterTemplate, Part, PartCategory, SupplierPart
 from inventree.stock import StockItem, StockLocation
@@ -45,6 +44,7 @@ class InvenTreeQuickAddServer(object):
         # Setup distributor API interfaces
         self.setup_digikey()
         self.parameter_templates = InventreeParameterTemplateManager(self.inventree)
+        self.suppliers = InvenTreeCompanyManager(self.inventree)
 
     def setup_digikey(self):
         if "digikey" in config:
@@ -203,6 +203,8 @@ class InvenTreeQuickAddServer(object):
             ###
             part = self.get_or_create_part(part_info, category.pk)
             self.add_parameters_to_part(part, part_info)
+            # Add to supplier
+            digikey = self.suppliers.get_or_create_digikey()
             # Add the part to the stock
 
 
