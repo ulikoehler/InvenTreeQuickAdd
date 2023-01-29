@@ -19,6 +19,8 @@ import { AutoFocusModule } from 'primeng/autofocus';
 import { ButtonModule } from 'primeng/button';
 import { InputTextModule } from 'primeng/inputtext';
 import {InputNumberModule} from 'primeng/inputnumber';
+import {AutoCompleteModule} from 'primeng/autocomplete';
+
 import { QuickAddCardComponent } from './quick-add-card/quick-add-card.component';
 
 import { InventreeQuantityInputComponent } from './inventree-quantity-input/inventree-quantity-input.component';
@@ -40,6 +42,7 @@ import { InventreeQuantityInputComponent } from './inventree-quantity-input/inve
     CardModule,
     InputNumberModule,
     ButtonModule,
+    AutoCompleteModule,
     AutoFocusModule,
     InputTextModule,
     SelectButtonModule,

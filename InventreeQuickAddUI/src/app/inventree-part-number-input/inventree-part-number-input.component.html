@@ -1,8 +1,23 @@
 <div class="grid p-fluid">
     <div class="col-12 md:col-4">
-        <div class="p-inputgroup">
-            <span class="p-inputgroup-addon"><i class="pi pi-qrcode"></i></span>
-            <input type="text" [(ngModel)]="partNumber" pInputText placeholder="Part number (or scan code)" pAutoFocus [autofocus]="true">
-        </div>
+        <!--<div class="p-inputgroup">
+            <span class="p-inputgroup-addon"><i class="pi pi-qrcode"></i></span>-->
+            <p-autoComplete [(ngModel)]="partNumber" [suggestions]="mpnSuggestions" placeholder="Part number (or scan code)" pAutoFocus [autofocus]="true" (completeMethod)="autocomplete($event)" field="name" [dropdown]="true">
+                <ng-template let-partChoice pTemplate="item">
+                    <div class="part-choice">
+                        <div>
+                            <span class="mpn">{{partChoice.MPN}}</span>
+                            <span class="category" *ngIf="partChoice.Category"><i class="pi pi-sitemap"></i>&nbsp;{{partChoice.Category}}</span>
+                            <span class="package" *ngIf="partChoice.Package"><i class="pi pi-box"></i>&nbsp;{{partChoice.Package}}</span>
+                            <span class="manufacturer" *ngIf="partChoice.Manufacturer"><i class="pi pi-building"></i>&nbsp;{{partChoice.Manufacturer}}</span>
+                        </div>
+                        <div class="description" *ngIf="partChoice.Description">
+                            {{partChoice.Description}}
+                        </div>
+                    </div>
+                </ng-template>
+            </p-autoComplete>
+
+        <!--</div>-->
     </div>
 </div>
