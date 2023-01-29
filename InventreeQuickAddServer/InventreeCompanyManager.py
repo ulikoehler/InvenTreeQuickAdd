@@ -1,25 +1,9 @@
 #!/usr/bin/env python3
 from inventree.company import Company, SupplierPart, ManufacturerPart
-import requests
 import yaml
 import structlog
 from Config import *
-import tempfile
-from urllib.parse import urlsplit
-import os.path
-
-def set_company_image(company: Company, image_url: str):
-    # Get extension from image_url
-    path = urlsplit(image_url).path
-    extension = os.path.splitext(path)[-1] # e.g. ".jpg"
-    # Create named temporary file
-    with tempfile.NamedTemporaryFile(suffix=extension) as image_file:
-        # Download image to temporary file
-        image_file.write(requests.get(image_url).content)
-        # Upload image to InvenTree
-        company.uploadImage(image_file.name)
-        # Delete temporary file
-        image_file.close()
+from InventreeImage import set_inventree_image
 
 class InvenTreeManufacturerManager(object):
     def __init__(self, api):
@@ -56,7 +40,7 @@ class InvenTreeManufacturerManager(object):
         self.standard_manufacturers[template["name"]] = self.create_manufacturer_if_not_exists(template)
         # Add image, if any
         if image_url:
-            set_company_image(self.standard_manufacturers[template["name"]], image_url)
+            set_inventree_image(self.standard_manufacturers[template["name"]], image_url)
 
     def __getitem__(self, key):
         # Map alias
@@ -108,7 +92,7 @@ class InvenTreeSupplierManager(object):
         self.standard_suppliers[template["name"]] =  self.create_supplier_if_not_exists(template)
         # Add image, if any
         if image_url:
-            set_company_image(self.standard_suppliers[template["name"]], image_url)
+            set_inventree_image(self.standard_suppliers[template["name"]], image_url)
 
     def __getitem__(self, key):
         if key not in self.standard_suppliers:

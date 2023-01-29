@@ -38,3 +38,8 @@ manufacturers:
         logo: https://logodix.com/logo/1743243.png
         aliases:
             - Microchip
+    -   name: ON Semiconductor
+        website: https://www.onsemi.com/
+        logo: https://www.logolynx.com/images/logolynx/fc/fc52753f324029111154b6220b7ed6a3.jpeg
+        aliases:
+            - onsemi

@@ -17,6 +17,7 @@ from digikey.v3.productinformation import (KeywordSearchRequest,
 from inventree.part import Parameter, ParameterTemplate, Part, PartCategory
 from inventree.stock import StockItem, StockLocation
 from InventreeSupplierPartManager import InventreeSupplierManufacturerPartManager
+from InventreeImage import set_inventree_image
 
 class PartInfo(object):
     """Abstract part info, indepent of the source"""
@@ -25,6 +26,7 @@ class PartInfo(object):
     datasheet: str = None
     package: str = None
     manufacturer: str = None
+    image_url: str = None
 
     def __setitem__(self, key, value):
         setattr(self, key, value)
@@ -189,11 +191,12 @@ class InvenTreeQuickAddServer(object):
             digikey_result = self.search_digikey(part_info.mpn)
             # Try to find exactly matching MPNs
             if digikey_result.exact_manufacturer_products_count > 0:
-
                 # Copy part properties only from the first exact match
                 product: ProductDetails = digikey_result.exact_manufacturer_products[0]
+                print(product)
                 part_info.description = product.detailed_description
                 part_info.datasheet = product.primary_datasheet
+                part_info.image_url = product.primary_photo
 
                 for parameter in product.parameters:
                     if parameter.parameter == "Supplier Device Package":
@@ -206,23 +209,27 @@ class InvenTreeQuickAddServer(object):
             # Create the part in InvenTree
             ###
             part = self.get_or_create_part(part_info, category.pk)
+            set_inventree_image(part, part_info.image_url)
             self.add_parameters_to_part(part, part_info)
 
             # Add supplier parts
             first_supplier_part = None
             for product in digikey_result.exact_manufacturer_products:
-                self.logger.info("Creating DigKey supplier part", mpn=part_info.mpn, sku=product.digi_key_part_number)
+                self.logger.info("Creating DigiKey supplier part", mpn=part_info.mpn, sku=product.digi_key_part_number)
+                # Create manufacturer part
+                manufacturer_part = self.supplier_manufacturer_parts.create_manufacturer_part(product.manufacturer.value, part, {
+                    "MPN": part_info.mpn,
+                })
+                # Create supplier part
                 supplier_part = self.supplier_manufacturer_parts.create_supplier_part("Digi-Key", part, {
                     "SKU": product.digi_key_part_number,
-                    "link": product.product_url
+                    "link": product.product_url,
+                    "packaging": product.packaging.value,
+                    "manufacturer_part": manufacturer_part.pk,
+                    "description": product.detailed_description
                 })
                 if first_supplier_part is None:
                     first_supplier_part = supplier_part
-                # Create manufacturer part
-                self.supplier_manufacturer_parts.create_manufacturer_part(product.manufacturer.value, part, {
-                    "MPN": part_info.mpn,
-                })
-
 
             # Add the part to the stock
             self.logger.info("Adding stock for part", part=part_info.mpn, location=location.pathstring, quantity=data["quantity"])
