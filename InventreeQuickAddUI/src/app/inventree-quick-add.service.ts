@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { AddPartParameters } from './add-part-parameters';
+import { AutocompleteResult } from './autocomplete-result';
 
 @Injectable({
   providedIn: 'root'
@@ -21,5 +22,9 @@ export class InventreeQuickAddService {
 
   public addPart(part: AddPartParameters): Observable<any> {
     return this.http.post<any>(`/api/inventree/add-part`, part);
+  }
+
+  public autocompleteMPN(mpnPart: string): Observable<AutocompleteResult[]> {
+    return this.http.get<AutocompleteResult[]>(`/api/search/autocomplete`, {params: {query: mpnPart}});
   }
 }
