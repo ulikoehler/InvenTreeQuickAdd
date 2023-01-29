@@ -67,6 +67,14 @@ class InvenTreeQuickAddServer(object):
         result = digikey.keyword_search(body=search_request)
         return result
 
+    def extract_exact_matches_from_digikey_search_result(self, digikey_result: KeywordSearchResponse) -> list:
+        """Extract the exact matches from the search result"""
+        all_exact_matches = digikey_result.exact_manufacturer_products
+        if digikey_result.exact_digi_key_product is not None:
+            all_exact_matches.append(digikey_result.exact_digi_key_product)
+        return all_exact_matches
+
+
     def find_stock_locations(self) -> dict:
         all_stock_locations = StockLocation.list(self.inventree)
         # Dict of part categories by name
@@ -173,6 +181,46 @@ class InvenTreeQuickAddServer(object):
               for pathstring, category in self.part_categories_by_pathstring.items()
             ])
 
+        def digikey_product_to_autocomplete_result(product: ProductDetails):
+            return {
+                "MPN": product.manufacturer_part_number,
+                "Manufacturer": product.manufacturer.value,
+                "Description": product.detailed_description,
+                "Package": extract_supplier_package_from_digikey_product(product),
+                "Category": product.family.value,
+            }
+
+        def extract_supplier_package_from_digikey_product(product: ProductDetails):
+            for parameter in product.parameters:
+                if parameter.parameter == "Supplier Device Package":
+                    return parameter.value
+            return None
+
+        @self.app.route('/api/search/autocomplete', method='GET')
+        def autocomplete():
+            query = request.params["query"]
+
+            digikey_result = self.search_digikey(query)
+            print(digikey_result)
+
+            # All exact matches go to the front of the list
+            all_matches = [
+                digikey_product_to_autocomplete_result(match)
+                for match in self.extract_exact_matches_from_digikey_search_result(digikey_result)
+            ]
+
+            max_num_results = 20
+
+            # Add products to result until max length is reached
+            for inexact_product in digikey_result.products:
+                if len(all_matches) >= max_num_results:
+                    break
+                all_matches.append(digikey_product_to_autocomplete_result(inexact_product))
+
+            self.logger.debug("Autocomplete result", query=query, matches=all_matches)
+            response.content_type = 'application/json'
+            return json.dumps(all_matches)
+
         @self.app.route('/api/inventree/add-part', method='POST')
         def add_part():
             data = request.json
@@ -185,25 +233,21 @@ class InvenTreeQuickAddServer(object):
             location = StockLocation(self.inventree, data["location"])
 
             part_info: PartInfo = PartInfo()
-            part_info.mpn = data["partNumber"]
 
             # Search on DigiKey
-            digikey_result = self.search_digikey(part_info.mpn)
-            # Try to find exactly matching MPNs
-            if digikey_result.exact_manufacturer_products_count > 0:
+            digikey_result = self.search_digikey(data["partNumber"])
+            # Try to find exactly matching MPNs or DigiKey numbers
+            all_exact_matches = self.extract_exact_matches_from_digikey_search_result(digikey_result)
+
+            if len(all_exact_matches) > 0:
                 # Copy part properties only from the first exact match
-                product: ProductDetails = digikey_result.exact_manufacturer_products[0]
+                product: ProductDetails = all_exact_matches[0]
                 print(product)
+                part_info.mpn = product.manufacturer_part_number
                 part_info.description = product.detailed_description
                 part_info.datasheet = product.primary_datasheet
                 part_info.image_url = product.primary_photo
-
-                for parameter in product.parameters:
-                    if parameter.parameter == "Supplier Device Package":
-                        part_info.package = parameter.value
-            elif digikey_result.exact_digi_key_product is not None:
-                # Exact match on DigiKey part number
-                pass # TODO
+                part_info.package = extract_supplier_package_from_digikey_product(product)
 
             ###
             # Create the part in InvenTree
@@ -214,7 +258,7 @@ class InvenTreeQuickAddServer(object):
 
             # Add supplier parts
             first_supplier_part = None
-            for product in digikey_result.exact_manufacturer_products:
+            for product in all_exact_matches:
                 self.logger.info("Creating DigiKey supplier part", mpn=part_info.mpn, sku=product.digi_key_part_number)
                 # Create manufacturer part
                 manufacturer_part = self.supplier_manufacturer_parts.create_manufacturer_part(product.manufacturer.value, part, {
