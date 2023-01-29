@@ -43,3 +43,9 @@ manufacturers:
         logo: https://www.logolynx.com/images/logolynx/fc/fc52753f324029111154b6220b7ed6a3.jpeg
         aliases:
             - onsemi
+    -   name: Diodes Inc.
+        website: https://www.diodes.com/
+        logo: https://www.digikey.com/-/media/Images/Vendors/D/web-diodes.png
+        aliases:
+            - Diodes
+            - Diodes Incorporated
