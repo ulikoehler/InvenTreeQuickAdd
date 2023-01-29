@@ -189,6 +189,7 @@ class InvenTreeQuickAddServer(object):
             digikey_result = self.search_digikey(part_info.mpn)
             # Try to find exactly matching MPNs
             if digikey_result.exact_manufacturer_products_count > 0:
+
                 # Copy part properties only from the first exact match
                 product: ProductDetails = digikey_result.exact_manufacturer_products[0]
                 part_info.description = product.detailed_description
@@ -208,12 +209,15 @@ class InvenTreeQuickAddServer(object):
             self.add_parameters_to_part(part, part_info)
 
             # Add supplier parts
+            first_supplier_part = None
             for product in digikey_result.exact_manufacturer_products:
                 self.logger.info("Creating DigKey supplier part", mpn=part_info.mpn, sku=product.digi_key_part_number)
-                self.supplier_manufacturer_parts.create_supplier_part("Digi-Key", part, {
+                supplier_part = self.supplier_manufacturer_parts.create_supplier_part("Digi-Key", part, {
                     "SKU": product.digi_key_part_number,
                     "link": product.product_url
                 })
+                if first_supplier_part is None:
+                    first_supplier_part = supplier_part
                 # Create manufacturer part
                 self.supplier_manufacturer_parts.create_manufacturer_part(product.manufacturer.value, part, {
                     "MPN": part_info.mpn,
@@ -221,6 +225,13 @@ class InvenTreeQuickAddServer(object):
 
 
             # Add the part to the stock
+            self.logger.info("Adding stock for part", part=part_info.mpn, location=location.pathstring, quantity=data["quantity"])
+            stocked_item = StockItem.create(self.inventree, {
+                "part": part.pk,
+                "location": location.pk,
+                "quantity": data["quantity"],
+                "supplier_part": first_supplier_part.pk if first_supplier_part is not None else None
+            })
 
             response.content_type = 'application/json'
             return {"status": "ok"}
